@@ -4,6 +4,7 @@ from sympy.ntheory.residue_ntheory import _sqrt_mod_prime_power
 from sympy.ntheory import isprime
 from math import log, sqrt
 from decimal import Decimal
+from datetime import datetime
 import random
 
 rgen = random.Random()
@@ -479,7 +480,9 @@ def qs(N, prime_bound, M, ERROR_TERM=25, seed=1234):
     """
     ERROR_TERM*=2**10
     rgen.seed(seed)
+    print (datetime.now().time(),': Generating factor base ...')
     idx_1000, idx_5000, factor_base = _generate_factor_base(prime_bound, N)
+    print (datetime.now().time(),': Generating factor base completed.')
     smooth_relations = []
     ith_poly = 0
     partial_relations = {}
@@ -487,18 +490,23 @@ def qs(N, prime_bound, M, ERROR_TERM=25, seed=1234):
     threshold = 5*len(factor_base) // 100
     while True:
         if ith_poly == 0:
+            print (datetime.now().time(),': Initialize first polynomial ...')
             ith_sieve_poly, B_array = _initialize_first_polynomial(N, M, factor_base, idx_1000, idx_5000)
+            print (datetime.now().time(),': Initialization completed.')
         else:
+            print (datetime.now().time(),': Initialize ', ith_poly, '-th polynomial ...')
             ith_sieve_poly = _initialize_ith_poly(N, factor_base, ith_poly, ith_sieve_poly, B_array)
+            print (datetime.now().time(),': Initialization completed.')
         ith_poly += 1
         if ith_poly >= 2**(len(B_array) - 1): # time to start with a new sieve polynomial
-            ith_poly = 0
+            ith_poly = 0 
         sieve_array = _gen_sieve_array(M, factor_base)
         s_rel, p_f = _trial_division_stage(N, M, factor_base, sieve_array, ith_sieve_poly, partial_relations, ERROR_TERM)
         smooth_relations += s_rel
         proper_factor |= p_f
         if len(smooth_relations) >= len(factor_base) + threshold:
             break
+    print (datetime.now().time(),': Creation sieve array completed.') 
     matrix = _build_matrix(smooth_relations)
     dependent_row, mark, gauss_matrix = _gauss_mod_2(matrix)
     N_copy = N
@@ -513,9 +521,12 @@ def qs(N, prime_bound, M, ERROR_TERM=25, seed=1234):
                 break
             if(N_copy == 1):
                 break
+            print (datetime.now().time(),': Factor:', factor, ' Ni:', N_copy)
     return proper_factor
 
-print (qs(25645121643901801, 2000, 10000))
 """
-qs(0x3082010a0282010100be409df46ee1ea76871c4d45448ebe46c883069dc12afe181f8ee402faf3ab5d508a16310b9a06d0c57022cd492d5463ccb66e68460b53eacb4c24c0bc724eeaf115aef4549a120ac37ab23360e2da8955f32258f3dedccfef8386a28c944f9f68f29890468427c776bfe3cc352c8b5e07646582c048b0a891f9619f762050a891c766b5eb78620356f08a1a13ea31a31ea099fd38f6f62732586f07f56bb8fb142bafb7aaccd6635f738cda0599a838a8cb17783651ace99ef4783a8dcf0fd942e2980cab2f9f0e01deef9f9949f12ddfac744d1b98b547c5e529d1f99018c7629cbe83c7267b3e8a25c7c0dd9de6356810209d8fd8ded2c3849c0d5ee82fc90203, 2000, 10000)
+print (qs(25645121643901801, 2000, 10000))
+print (qs(0x3082010a0282010100be409df46ee1ea76871c4d45448ebe46c883069dc12afe181f8ee402faf3ab5d508a16310b9a06d0c57022cd492d5463ccb66e68460b53eacb4c24c0bc724eeaf115aef4549a120ac37ab23360e2da8955f32258f3dedccfef8386a28c944f9f68f29890468427c776bfe3cc352c8b5e07646582c048b0a891f9619f762050a891c766b5eb78620356f08a1a13ea31a31ea099fd38f6f62732586f07f56bb8fb142bafb7aaccd6635f738cda0599a838a8cb17783651ace99ef4783a8dcf0fd942e2980cab2f9f0e01deef9f9949f12ddfac744d1b98b547c5e529d1f99018c7629cbe83c7267b3e8a25c7c0dd9de6356810209d8fd8ded2c3849c0d5ee82fc90203, 2000, 10000))
+print (qs(0x3082010a0282010100be409df46ee1ea76871c4d454, 0x20000, 0x1000)) --> 1134308329036989866337357649190002837825416381912148
+{1995077197595492, 2274214412162259291574722201940738676, 4} -- Takes 18:21:53.548006 --> 21:13:57.613757 
 """
