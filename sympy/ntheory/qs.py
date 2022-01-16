@@ -3,6 +3,7 @@ from sympy.core.power import integer_nthroot
 from sympy.ntheory.residue_ntheory import _sqrt_mod_prime_power
 from sympy.ntheory import isprime
 from math import log, sqrt
+from decimal import Decimal
 import random
 
 rgen = random.Random()
@@ -121,7 +122,7 @@ def _initialize_first_polynomial(N, M, factor_base, idx_1000, idx_5000, seed=Non
     """
     if seed is not None:
         rgen.seed(seed)
-    approx_val = sqrt(2*N) / M
+    approx_val = sqrt(Decimal(2*N)) / M
     # `a` is a parameter of the sieve polynomial and `q` is the prime factors of `a`
     # randomly search for a combination of primes whose multiplication is close to approx_val
     # This multiplication of primes will be `a` and the primes will be `q`
@@ -513,3 +514,8 @@ def qs(N, prime_bound, M, ERROR_TERM=25, seed=1234):
             if(N_copy == 1):
                 break
     return proper_factor
+
+print (qs(25645121643901801, 2000, 10000))
+"""
+qs(0x3082010a0282010100be409df46ee1ea76871c4d45448ebe46c883069dc12afe181f8ee402faf3ab5d508a16310b9a06d0c57022cd492d5463ccb66e68460b53eacb4c24c0bc724eeaf115aef4549a120ac37ab23360e2da8955f32258f3dedccfef8386a28c944f9f68f29890468427c776bfe3cc352c8b5e07646582c048b0a891f9619f762050a891c766b5eb78620356f08a1a13ea31a31ea099fd38f6f62732586f07f56bb8fb142bafb7aaccd6635f738cda0599a838a8cb17783651ace99ef4783a8dcf0fd942e2980cab2f9f0e01deef9f9949f12ddfac744d1b98b547c5e529d1f99018c7629cbe83c7267b3e8a25c7c0dd9de6356810209d8fd8ded2c3849c0d5ee82fc90203, 2000, 10000)
+"""
