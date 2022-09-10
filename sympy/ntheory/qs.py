@@ -515,3 +515,43 @@ def qs(N, prime_bound, M, ERROR_TERM=25, seed=1234):
             if(N_copy == 1):
                 break
     return proper_factor
+
+def qsfactors(N):
+    factorList = set()
+    if isprime(N):
+        factorList.add(N)
+        return factorList
+
+    Nc = N
+    while not isprime(Nc):
+        initFactorList = qs(Nc,1000, 2000)
+        for factor in initFactorList:
+            if Nc % factor == 0:
+                factorList.add(qsfactors(factor))
+                Nc //= factor
+
+
+N = 9804659461513846513
+print(qsfactors(25645121643901801))
+# qs(9804659461513846513, 2000, 10000)
+# m = isqrt(N)
+# delta_N = N - m*m
+# delta_N1 = (m+1)**2 - N
+# delta_2m = 2*m % delta_N
+# x0 = delta_N - delta_2m
+# print("N=\t\t", N, end=";\n")
+# print("m=\t\t", m, end=";\n")
+# print("delta_N=\t", delta_N, end=";\n")
+# print("delta_N1=\t", delta_N1, end=";\n")
+# print("delta_2m=\t", delta_2m, end=";\n")
+# print("x0=\t\t", x0, end=";\n")
+# print("(2m+x) mod delta_N =\t", (2*m + x0) % delta_N)
+# L = (2*m + x0) // delta_N
+# print("L=\t\t", L, end=";\n")
+
+print("delta_N=\t", delta_N, end=";\n")
+print("[x*(2m+x)/delta_N-1]=", (x0*L-1))
+print("Prod(delta_N=", qs(delta_N, 2000, 10000))
+for k in range(1,20):
+    Xk = x0+k*delta_N
+    print("Prod(Xk*(L+k)-1=", sorted(qs(Xk*(L+k)-1, 2000, 10000)), "=", Xk)
